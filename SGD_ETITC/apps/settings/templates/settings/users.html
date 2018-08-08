@@ -1,0 +1,130 @@
+{% extends 'core/base.html' %}
+
+{% load static %}
+
+{% block title %}Usuarios{% endblock %}
+
+{% block content %}
+<div class="v-table__overflow">
+{% if users %}
+	<div style="overflow-y: auto">
+		<h3 class="headline ma-2">Lista de Usuarios</h3>
+
+		<v-form name="form">
+			{% csrf_token %}
+			<v-layout row wrap>
+				<v-flex xs6 sm6 md3>
+					<v-text-field
+						name="q"
+						label="Buscar"
+						value="{{ params.q }}"
+					></v-text-field>
+				</v-flex>
+				<v-flex xs1 ml-2>
+					<input type="hidden" name="p" :value="select_paginate_by">
+					<v-select 
+						:items="paginate_by"
+						v-model="select_paginate_by"
+						label="Paginar por"
+						persistent-hint
+						return-object
+						single-line
+					></v-select>
+				</v-flex>
+				<v-flex xs2 mt-2>
+					<v-btn type="submit">
+						Buscar
+					</v-btn>
+				</v-flex>
+			</v-layout>
+		</v-form>
+
+		<table class="v-datatable v-table elevation-2" >
+			<thead>
+				<tr style="border-bottom: 1px solid rgba(0,0,0,0.12)">
+					<th class="column text-xs-left">Nombre</th>
+					<th class="column text-xs-left">Apellido</th>
+					<th class="column text-xs-left">Usuario</th>
+					<th class="column text-xs-left">Email</th>
+					<th class="column text-xs-left">Staff</th>
+					<th></th>
+				</tr>
+			</thead>
+			
+			<tbody>
+				{% for user in users %}
+					<tr>
+						<td>{{ user.first_name }}</td>
+						<td>{{ user.last_name }}</td>
+						<td>{{ user.username }}</td>
+						<td>{{ user.email }}</td>
+						<td> <v-icon>{% if user.is_staff %}done{% endif %}</v-icon></td>
+						<td>
+							<v-layout row wrap>
+								<v-flex xs6>
+									<v-btn icon ripple>
+										<v-icon color="blue lighten-">edit</v-icon>
+									</v-btn>
+								</v-flex>
+								<v-flex xs6>
+									<v-btn icon ripple>
+										<v-icon color="red darken-1">clear</v-icon>
+									</v-btn>
+								</v-flex>
+							</v-layout>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+
+			{% if page_obj.has_previous or page_obj.has_next  %}
+			<tfoot>
+				<tr>
+					<td colspan="7">
+						<v-layout row wrap mb-3>	
+							<v-flex xs6 mt-2>
+							
+								{% if page_obj.number and  page_obj.paginator.num_pages %}
+								Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }} - {{ userslength }} Usuarios
+								{% endif %}
+								
+								{% if page_obj.has_previous %}
+								<v-tooltip left>
+									<v-btn slot="activator" icon ripple href="?page={{ page_obj.previous_page_number }}&p={{paginate_by}}">
+										<v-icon>fast_rewind</v-icon>
+									</v-btn>
+
+									Ir a la página {{ page_obj.previous_page_number }}
+								</v-tooltip>
+								{% endif %}
+
+								{% if page_obj.has_next %}
+								<v-tooltip right>
+									<v-btn slot="activator" icon ripple href="?page={{ page_obj.next_page_number }}&p={{paginate_by}}">
+										{{ page_obj.paginator.page }}
+										<v-icon>fast_forward</v-icon>
+									</v-btn>
+
+									Ir a la página {{ page_obj.next_page_number }}
+
+								</v-tooltip>
+								{% endif %}
+							</v-flex>
+						</v-layout>
+					</td>
+				</tr>
+			</tfoot>
+			{% endif %}
+		</table>
+	</div>	
+{% else %}
+	<template>
+		<div style="width: 100%">
+			<v-alert :value="true" type="info" transition="scale-transition" dismissible>
+					No se encontraron usuarios registrados en el sistema.
+			</v-alert>
+		</div>
+	</template>
+{% endif %}
+</div>
+{% endblock content %}

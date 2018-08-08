@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+	<!-- Configuracion vue and vuerify  -->
+	<link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
+	<!-- Configuracion vue and vuerify  -->
+
+	<title>{% block title %}Login  {% endblock %}</title>
+	{% load static %}
+</head>
+<body>
+	<div id="app">
+		<v-app id="inspire">
+			<v-container fill-height>
+				<v-layout align-center justify-center fill-height>
+					<v-flex xs12 sm6 >
+						<v-card fluid grid-list-lg>
+							<v-form method="POST" name="form" ref="form" v-model="valid" class="ma-5" lazy-validation>
+								{% csrf_token %}
+								<v-card-text primary-title hover class="text-md-center">
+										<h2  class="headline">Login</h2>
+								</v-card-text>
+
+								<v-text-field 
+									class="mb-2"
+									v-model="name"
+									prepend-icon="person" 
+									name="username" 
+									label="Usuario"
+									:rules="nameRules"
+									required>
+								</v-text-field>
+								<v-text-field 
+									class="mb-2"
+									v-model="password"
+									prepend-icon="lock" 
+									name="password" 
+									label="Contraseña" 
+									type="password"
+									:rules="passwordRules"
+									required>
+								</v-text-field>
+								<v-card-actions>
+									<v-btn 
+										type="submit" 
+										color="info" 
+										class="mb-5"
+										large 
+										block
+										:disabled="!valid"
+										@click.prevent="submit">
+										Login
+									</v-btn>
+								</v-card-actions>
+							</v-form>
+						</v-card>
+					</v-flex>
+				</v-layout>
+			</v-container>
+		</v-app>
+	</div>
+		
+	<!-- Configuracion vue and vuerify  -->
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
+	<script type="text/javascript">
+	
+	new Vue({
+		el: '#app',
+		delimiters: ['${', '}'],
+		data: () => ({
+			valid: true,
+      name: '',
+      nameRules: [
+        v => !!v || 'El nombre de usuario es requerido',
+        v => (v && v.length <= 20) || 'El nombre de usuario debe ser mayor a 20 caracteres'
+      ],
+      password: '',
+      passwordRules: [
+        v => !!v || 'La contraseña es requerida',
+        v => (v && v.length >= 8) || 'La contraseña debe ser de minimo 8 caractetes'
+      ]
+		}),
+		methods: {
+      submit () {
+        if (this.$refs.form.validate()) {
+					form.submit();
+        }
+      }
+    }
+	});
+	</script>
+		
+</body>
+</html>
