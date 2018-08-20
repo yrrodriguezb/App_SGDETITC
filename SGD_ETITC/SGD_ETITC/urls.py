@@ -18,7 +18,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 
-from apps.authentication.views import LoginView, LogoutView
+from apps.authentication.views import LoginView, LogoutView, PasswdChangeView
 
 
 urlpatterns = [
@@ -26,6 +26,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('core/', include('apps.core.urls')),
     path('logout/', LogoutView.as_view(), name='logout'),
+    path('password_change/', PasswdChangeView.as_view(), name='passwd_change'),
     path('profile/', include('apps.profile.urls')),
     path('administration/', include('apps.administration.urls')),
 ]

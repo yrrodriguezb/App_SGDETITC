@@ -4,9 +4,10 @@ from __future__ import unicode_literals
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
+from django.contrib.auth.views import PasswordChangeView
 from django.urls import reverse_lazy
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import redirect
 from django.views.generic import FormView, RedirectView
 
 
@@ -33,3 +34,12 @@ class LogoutView(RedirectView):
         if self.request.user.is_authenticated:
             logout(self.request)
         return super(LogoutView, self).get_redirect_url(*args, **kwargs)
+
+
+class PasswdChangeView(PasswordChangeView):
+    template_name = "authentication/password_change.html"
+    success_url = reverse_lazy("passwd_change")
+
+    def get_success_url(self):
+        self.success_url = str(self.success_url + "?success")
+        return super(PasswdChangeView, self).get_success_url()

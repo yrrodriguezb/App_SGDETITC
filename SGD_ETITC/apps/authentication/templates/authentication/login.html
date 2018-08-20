@@ -33,6 +33,7 @@
 									name="username" 
 									label="Usuario"
 									:rules="nameRules"
+									:error-messages="error_messages.username"
 									required>
 								</v-text-field>
 								<v-text-field 
@@ -43,6 +44,7 @@
 									label="Contraseña" 
 									type="password"
 									:rules="passwordRules"
+									:error-messages="error_messages.password"
 									required>
 								</v-text-field>
 								<v-card-actions>
@@ -63,6 +65,7 @@
 							</v-form>
 						</v-card>
 					</v-flex>
+					</form>
 				</v-layout>
 			</v-container>
 		</v-app>
@@ -87,7 +90,11 @@
       passwordRules: [
         v => !!v || 'La contraseña es requerida',
         v => (v && v.length >= 8) || 'La contraseña debe ser de minimo 8 caractetes'
-      ]
+			],
+			error_messages: {
+        username: '{{ form.username.errors }}',
+        password: '{{ form.password.errors }}'
+      },
 		}),
 		methods: {
       submit () {
