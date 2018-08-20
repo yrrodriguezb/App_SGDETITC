@@ -26,7 +26,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('core/', include('apps.core.urls')),
     path('logout/', LogoutView.as_view(), name='logout'),
-    path('settings/', include('apps.settings.urls')),
+    path('profile/', include('apps.profile.urls')),
+    path('administration/', include('apps.administration.urls')),
 ]
 
 if settings.DEBUG:

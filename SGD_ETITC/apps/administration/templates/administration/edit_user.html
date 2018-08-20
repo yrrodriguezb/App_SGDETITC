@@ -1,0 +1,103 @@
+{% extends 'core/base.html' %}
+
+{% load static %}
+
+{% block title %}Editar Usuario{% endblock %}
+
+{% block content %}
+<div class="v-table__overflow">
+	<v-container grid-list-md>
+		<v-layout row wrap align-center justify-center row>
+			<v-flex xs12 md8 lg10>
+				<h3 class="headline mr-3 ml-3">Modificar Usuario</h3>
+				
+				<br>
+			
+				<form class="ma-3">		
+					<v-card dark color="shades" class="mb-4">
+						<v-card-text>Información Personal</v-card-text>
+					</v-card>
+
+					<v-text-field
+						label="Usuario"
+						required
+						@input="$v.name.$touch()"
+						@blur="$v.name.$touch()"
+						value="{{form.username.value}}"
+					></v-text-field>
+	
+					<v-layout row>
+						<v-flex xs6>
+								<v-text-field
+								label="Nombre"
+								required
+								@input="$v.email.$touch()"
+								@blur="$v.email.$touch()"
+								value="{{form.first_name.value}}"
+							></v-text-field>
+						</v-flex>
+						<v-flex xs6>
+							<v-text-field
+								label="Apellidos"
+								required
+								@input="$v.email.$touch()"
+								@blur="$v.email.$touch()"
+								value="{{form.last_name.value}}"
+							></v-text-field>
+						</v-flex>
+					</v-layout>
+
+					<v-text-field
+						label="Correo Electronico"
+						required
+						@input="$v.email.$touch()"
+						@blur="$v.email.$touch()"
+						value="{{form.email.value}}"
+					></v-text-field>
+
+					<v-card dark color="shades" class="mb-2">
+						<v-card-text>Permisos</v-card-text>
+					</v-card>
+
+					<v-layout row>
+						<v-flex xs12 md6>
+							<v-checkbox
+								label="Es activo"
+								required
+								@change="$v.checkbox.$touch()"
+								@blur="$v.checkbox.$touch()"
+								checked="{{form.is_active.value}}"
+								v-model="{{form.is_active.value}}"
+							></v-checkbox>
+						</v-flex>
+						<v-flex xs12 md6>
+								<v-checkbox
+								label="Es staff"
+								required
+								@change="$v.checkbox.$touch()"
+								@blur="$v.checkbox.$touch()"
+								checked="{{form.is_staff.value}}"
+								v-model="{{form.is_staff.value}}"
+							></v-checkbox>
+						</v-flex>
+						<v-flex xs12 md6>
+							<v-checkbox
+								label="Es super usuario"
+								required
+								@change="$v.checkbox.$touch()"
+								@blur="$v.checkbox.$touch()"
+								checked="{{form.is_superuser.value}}"
+								v-model="{{form.is_superuser.value}}"
+							></v-checkbox>
+						</v-flex>
+					</v-layout>
+				
+					<v-btn color="primary" @click="submit">Guardar</v-btn>
+					<v-btn color="white" @click="clear" href="{% url 'users' %}">Regresar</v-btn>
+				</form>
+			</v-flex>
+
+		</v-layout>
+	</v-container>
+</div>
+{% endblock content %}

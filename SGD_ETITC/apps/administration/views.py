@@ -1,16 +1,18 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserChangeForm
 from django.db.models import Q
 from django.shortcuts import render
 from django.utils import timezone
 from django.views.generic.list import ListView
+from django.views.generic.edit import UpdateView
 
 
 class UserListView(LoginRequiredMixin, ListView):
     context_object_name = 'users'
     model = User
     paginate_by = 50
-    template_name = "settings/users.html"
+    template_name = "administration/users.html"
 
     def get_queryset(self):
         query = self.request.GET.get('q', '')
@@ -39,3 +41,9 @@ class UserListView(LoginRequiredMixin, ListView):
 
     def get_paginate_by(self, queryset):
         return self.request.GET.get('p', 50)
+
+
+class UserUpdateView(LoginRequiredMixin, UpdateView):
+    form_class = UserChangeForm
+    model = User
+    template_name = 'administration/edit_user.html'

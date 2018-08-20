@@ -1,0 +1,406 @@
+{% extends "core/base.html" %}
+
+{% load static %}
+
+{% block title %}Perfil{% endblock %}
+
+{% block style %}
+<style type="text/css">
+  .upload-btn-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    width: 100%;
+  }
+  
+  .upload-btn-wrapper input[type=file] {
+    font-size: 100px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+  }
+</style>
+{% endblock style %}
+
+{% block content %}
+<template>
+  <v-layout row ma-4>
+    <v-flex xs12 sm6 offset-sm3>
+      <v-card>
+        <v-card-media
+          {% if profile.avatar %}
+          :src="profile.profile.avatar"
+          {% else %}
+          src="{% static 'profile/img/no-avatar.png' %}"
+          {% endif %}
+          
+          height="300px"
+        >
+          <v-layout
+            column
+            fill-height
+          >
+            <v-card-title>
+              <v-spacer></v-spacer>
+
+              <v-btn @click="openProfileEdit" dark icon class="mr-3">
+                <v-icon>edit</v-icon>
+              </v-btn>
+            </v-card-title>
+
+            <v-spacer></v-spacer>
+
+            <v-card-title class="white--text">
+              <div style="width: 100%; text-align: center" class="display-1">${ profile.profile.first_name } ${ profile.profile.last_name } </div>
+            </v-card-title>
+          </v-layout>
+        </v-card-media>
+
+        <v-list two-line>
+          <v-list-tile @click="">
+            <v-list-tile-action>
+              <v-icon color="indigo">phone</v-icon>
+            </v-list-tile-action>
+
+            <v-list-tile-content>
+              <v-list-tile-title> ${ profile.profile.cellphone }</v-list-tile-title>
+              <v-list-tile-sub-title>celular</v-list-tile-sub-title>
+            </v-list-tile-content>
+
+            <v-list-tile-action>
+              <v-icon>chat</v-icon>
+            </v-list-tile-action>
+          </v-list-tile>
+
+          <v-list-tile @click="">
+            <v-list-tile-action></v-list-tile-action>
+
+            <v-list-tile-content>
+              <v-list-tile-title> ${ profile.profile.phone }</v-list-tile-title>
+              <v-list-tile-sub-title>Teléfono</v-list-tile-sub-title>
+            </v-list-tile-content>
+
+            <v-list-tile-action>
+              <v-icon>chat</v-icon>
+            </v-list-tile-action>
+          </v-list-tile>
+
+          <v-divider inset></v-divider>
+
+          <v-list-tile @click="">
+            <v-list-tile-action>
+              <v-icon color="indigo">mail</v-icon>
+            </v-list-tile-action>
+
+            <v-list-tile-content>
+              <v-list-tile-title>${ profile.profile.email }</v-list-tile-title>
+              <v-list-tile-sub-title>Personal</v-list-tile-sub-title>
+            </v-list-tile-content>
+          </v-list-tile>
+
+          <v-divider inset></v-divider>
+
+          <v-list-tile @click="">
+            <v-list-tile-action>
+              <v-icon color="indigo">date_range</v-icon>
+            </v-list-tile-action>
+
+            <v-list-tile-content>
+              <v-list-tile-title>${ profile.profile.birthdate }</v-list-tile-title>
+              <v-list-tile-sub-title>Fecha de Nacimiento</v-list-tile-sub-title>
+            </v-list-tile-content>
+          </v-list-tile>
+        </v-list>
+      </v-card>
+    </v-flex>
+
+    <v-dialog v-model="profile.dialog" persistent max-width="500px">
+      <v-card>
+        <v-card-title primary-title class="teal--text text--darken-4">
+          <span style="width: 100%; text-align: center" class="headline">Actualizar Perfil</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container grid-list-md>
+            <v-layout wrap>
+              <v-form v-model="profile.formValid" lazy-validation ref="formProfile" style="width: 100%" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <v-flex xs12>
+                  <v-text-field 
+                    v-model="profile.profile.first_name" 
+                    label="Nombres" 
+                    clearable 
+                    prepend-icon="account_circle" 
+                    required
+                    :rules="profile.rules.first_name"
+                  ></v-text-field>
+                </v-flex>
+
+                <v-flex xs12>
+                  <v-text-field
+                    style="padding-left: 34px"
+                    v-model="profile.profile.last_name" 
+                    label="Apellidos" 
+                    clearable 
+                    prepend-icon="" 
+                    required
+                    :rules="profile.rules.last_name"
+                  ></v-text-field>
+                </v-flex>
+                                  
+                <v-flex xs12>
+                  <v-text-field 
+                    v-model="profile.profile.cellphone" 
+                    label="Celular" 
+                    clearable 
+                    prepend-icon="phone_android" 
+                    required
+                    :rules="rules.empty"
+                  ></v-text-field>
+                </v-flex>
+
+                <v-flex xs12>
+                  <v-text-field
+                    v-model="profile.profile.phone" 
+                    label="Teléfono" 
+                    clearable 
+                    prepend-icon="phone" 
+                    required
+                    :rules="rules.empty">
+                  </v-text-field>
+                </v-flex>
+
+                <v-flex xs12>
+                  <v-text-field
+                    v-model="profile.profile.email" 
+                    label="Email" 
+                    clearable 
+                    prepend-icon="email" 
+                    required
+                    :rules="rules.email">
+                  </v-text-field>
+                </v-flex>
+
+                <v-flex xs12>
+                  <v-menu
+                    :close-on-content-click="false"
+                    v-model="profile.menu"
+                    :nudge-right="30"
+                    lazy
+                    transition="scale-transition"
+                    offset-y
+                    full-width
+                    max-width="290px"
+                    min-width="290px"
+                  >
+                    <v-text-field
+                      slot="activator"
+                      v-model="DateFormatted"
+                      label="Fecha de Nacimiento"
+                      :hint="'Fecha Actual ' + profile.date"
+                      persistent-hint
+                      prepend-icon="event"
+                      readonly
+                    ></v-text-field>
+                    <v-date-picker v-model="profile.date" no-title @input="profile.menu = false"></v-date-picker>
+                  </v-menu>
+                </v-flex>
+
+                <v-flex xs12>
+                  <div class="upload-btn-wrapper">
+                    <v-btn color="success" style="width:100%">Cambiar Imagen</v-btn>
+                    <input type="file" name="file" name="avatar" @change="setFile"/>
+                  </div>
+                </v-flex>
+
+              </v-form>
+
+              <v-flex xs12 style="padding-left: 12px">
+                <v-progress-linear 
+                  v-show="profile.progress.show"
+                  :indeterminate="profile.progress.indeterminate" 
+                  :active="profile.progress.active">
+                </v-progress-linear>
+
+                <v-alert 
+                  v-show="profile.alert.show"
+                  :value="profile.alert.value"
+                  :color="profile.alert.color"
+                  :icon="profile.alert.icon"
+                  outline
+                >
+                  ${ profile.alert.msg }
+                </v-alert>
+              </v-flex>
+
+            </v-layout>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" flat @click="closeModalProfile">Cerrar</v-btn>
+          <v-btn color="info" :disabled="!profile.formValid" flat @click="updateProfile">Guardar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-layout>
+</template>
+{% endblock content %}
+
+{% block extra_vue_data %}
+
+  <script type="text/javascript">
+    var file = null;
+
+    page.data.profile = {
+      dialog: null,
+      formValid: true,
+      date: '{{ profile.birthdate | default_if_none:"" | date:"Y-m-d" }}',
+      menu: false,
+      alert: {
+        show: false,
+        value: false,
+        color: 'success',
+        icon: null,
+        msg: ''
+      },
+      progress: {
+        indeterminate: false,
+        active: false,
+        show: false
+      },
+      profile: {
+        first_name: '{{ profile.user.first_name }}',
+        last_name: '{{ profile.user.last_name }}',
+        email: '{{ profile.user.email }}',
+        phone: '{{ profile.phone }}',
+        cellphone: '{{ profile.cellphone }}',
+        birthdate: '{{ profile.birthdate | date:"SHORT_DATE_FORMAT" }}',
+        avatar: '{{ profile.avatar.url }}',
+        url: '{{ profile.avatar.url }}'
+      },
+      rules: {
+        first_name: [
+          v => !!v || 'Este campo es obligatorio',
+          v => v.length <= 30 || 'La cantidad de caracteres no puede ser superior a 30'
+        ],
+        last_name: [
+          v => !!v || 'Este campo es obligatorio',
+          v => v.length <= 150 || 'La cantidad de caracteres no puede ser superior a 30'
+        ]
+      }
+    }
+  
+    page.computed.DateFormatted = (() => {
+      return page.methods.formatDate(page.data.profile.date);
+    })
+
+    page.methods.formatDate = (date) => {
+      if (!date) return null
+
+      const [year, month, day] = date.replace(/\//g, '-').split('-')     
+      return `${day}/${month}/${year}`
+    }
+
+    page.methods.parseDate = (date) => {
+      if (!date) return null
+
+      const [month, day, year] = date.split('/')
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+    }
+
+    page.watch.date = (val) => {
+      page.data.DateFormatted = page.methods.formatDate(page.data.date)
+    }
+
+  </script>
+{% endblock extra_vue_data %}
+
+{% block extra_vue %}
+<script>
+
+    get_form_data = () => {
+      let data = new FormData();
+      data.append('file', file);
+      data.append('phone', app.profile.profile.phone);
+      data.append('cellphone', app.profile.profile.cellphone);
+      data.append('email', app.profile.profile.email);
+      data.append('birthdate', app.DateFormatted);
+      data.append('first_name', app.profile.profile.first_name);
+      data.append('last_name', app.profile.profile.last_name);
+
+      return data;
+    }
+
+    app.closeModalProfile = () => {
+      app.profile.dialog = false;
+      app.profile.alert.show = false;
+      /* let p = app.profile.profile;
+      app.$refs.formProfile.reset();
+      app.profile.profile = p*/
+    }
+
+    app.closeProgressProfile = (data) => {
+      setTimeout(() => {
+        app.profile.progress.indeterminate = false;
+        app.profile.progress.active = false;
+        app.profile.progress.show = false;
+
+        app.showAlertProfile(data);
+      }, 2000)
+    }
+
+    app.showProgressProfile = () => {
+      app.profile.progress.indeterminate = true;
+      app.profile.progress.active = true;
+      app.profile.progress.show = true;
+    }
+
+    app.showAlertProfile = (data) => {
+      app.profile.alert.show = true;
+      app.profile.alert.value = true;
+      app.profile.alert.color =  data.alert.color;
+      app.profile.alert.icon = data.alert.icon;
+      app.profile.alert.msg = data.msg
+    }
+
+    app.closeAlertProfile = (time) => {
+      setTimeout(() => {
+        app.profile.alert.show = false;
+        app.profile.alert.value = false;
+      }, time || 0);
+    }
+
+    app.setFile = (e) => {
+      file = e.target.files[0]
+    }
+
+    app.updateProfile = () => {
+      app.closeAlertProfile();
+      app.showProgressProfile();
+
+      data = get_form_data();
+
+      app.$http.post("{% url 'change_profile' profile.id %}", data).then((res) => {
+        if (res.body.ok){
+          app.profile.profile.birthdate = res.body.data.birthdate;
+          app.profile.profile.phone = res.body.data.phone;
+          app.profile.profile.cellphone = res.body.data.cellphone;
+          app.date = app.parseDate(data.birthdate)
+          if (res.body.file)
+            app.profile.profile.avatar = `{{MEDIA_URL}}profiles/${res.body.file}`;
+          else
+            app.profile.profile.avatar = app.profile.profile.url
+        }
+
+        app.closeProgressProfile(res.body);
+
+      }, (err) => {
+        console.log(err)
+        app.closeProgressProfile(err.body);
+      });
+    }
+
+</script>
+{% endblock extra_vue %}

@@ -1,61 +1,36 @@
 {
 	"routes": [
-    {
-			"icon": "home",
-			"text": "Inicio",
-			"url": "/"
-		},
+    { "icon": "home", "text": "Inicio", "url": "/" },
 		{
 			"icon": "keyboard_arrow_up",
 			"icon-alt": "keyboard_arrow_down",
 			"text": "Gestión Documental",
 			"model": false,
 			"children": [
-				{
-					"text": "Consultar"
-				},
-				{
-					"text": "Importar"
-				},
-				{
-					"text": "Exportar"
-				},
-				{
-					"text": "Descargar"
-				},
-				{
-					"text": "Indexar Documentos"
-				}
+				{	"text": "Consultar"	},
+				{	"text": "Importar"	},
+				{	"text": "Exportar"	},
+				{	"text": "Descargar"	}
 			]
 		},
 		{
 			"icon": "keyboard_arrow_up",
 			"icon-alt": "keyboard_arrow_down",
-			"text": "Configuración",
+			"text": "Administración",
 			"admin": true,
 			"model": false,
 			"children": [
-				{
-					"text": "Administrar Cuenta"
-				},
-				{
-					"text": "Usuarios",
-					"url": "/settings/users/"
-				},
-				{
-					"text": "Panel de Administracion",
-					"url": "/admin/"
-				}
+				{ "text": "Administrar Cuenta" },
+				{	"text": "Usuarios",	"url": "/administration/users/" },
+				{	"text": "Panel de Administracion","url": "/admin/" }
 			]
 		},
-		{
-			"icon": "help",
-			"text": "Ayuda"
-		},
-		{
-			"icon": "power_settings_new",
-			"text": "Cerrar sesión",
-			"url": "/logout/"
-		}
+		{ "icon": "help", "text": "Ayuda" },
+		{ "icon": "power_settings_new", "text": "Cerrar sesión", "url": "/logout/" }
+	],
+	"subroutes": [
+		{ "icon": "home", "text": "Perfil", "url": "/profile" },
+		{ "icon": "home", "text": "Cambiar Contraseña", "url": "/password_change" },
+		{ "icon": "power_settings_new", "text": "Cerrar sesión", "url": "/logout/" }
 	]
 }

@@ -6,39 +6,40 @@
 
 {% block content %}
 <div class="v-table__overflow">
+	<h3 class="headline ma-3">Lista de Usuarios</h3>
+
+	<v-form name="form" method="GET" class="ma-3">
+		<v-layout row wrap>
+			<v-flex xs6 sm6 md3>
+				<v-text-field
+					clearable
+					name="q"
+					label="Buscar"
+					value="{{ params.q }}"
+					prepend-icon="search"
+					color="success"
+				></v-text-field>
+			</v-flex>
+			<v-flex xs1 ml-2>
+				<input type="hidden" name="p" :value="select_paginate_by">
+				<v-select 
+					:items="paginate_by"
+					v-model="select_paginate_by"
+					label="Paginar por"
+					return-object
+					single-line
+					color="success"
+				></v-select>
+			</v-flex>
+			<v-flex xs2 mt-2>
+				<v-btn type="submit" color="success">
+					Buscar
+				</v-btn>
+			</v-flex>
+		</v-layout>
+	</v-form>
 {% if users %}
 	<div style="overflow-y: auto">
-		<h3 class="headline ma-2">Lista de Usuarios</h3>
-
-		<v-form name="form">
-			{% csrf_token %}
-			<v-layout row wrap>
-				<v-flex xs6 sm6 md3>
-					<v-text-field
-						name="q"
-						label="Buscar"
-						value="{{ params.q }}"
-					></v-text-field>
-				</v-flex>
-				<v-flex xs1 ml-2>
-					<input type="hidden" name="p" :value="select_paginate_by">
-					<v-select 
-						:items="paginate_by"
-						v-model="select_paginate_by"
-						label="Paginar por"
-						persistent-hint
-						return-object
-						single-line
-					></v-select>
-				</v-flex>
-				<v-flex xs2 mt-2>
-					<v-btn type="submit">
-						Buscar
-					</v-btn>
-				</v-flex>
-			</v-layout>
-		</v-form>
-
 		<table class="v-datatable v-table elevation-2" >
 			<thead>
 				<tr style="border-bottom: 1px solid rgba(0,0,0,0.12)">
@@ -58,20 +59,24 @@
 						<td>{{ user.last_name }}</td>
 						<td>{{ user.username }}</td>
 						<td>{{ user.email }}</td>
-						<td> <v-icon>{% if user.is_staff %}done{% endif %}</v-icon></td>
-						<td>
-							<v-layout row wrap>
-								<v-flex xs6>
-									<v-btn icon ripple>
-										<v-icon color="blue lighten-">edit</v-icon>
-									</v-btn>
-								</v-flex>
-								<v-flex xs6>
-									<v-btn icon ripple>
-										<v-icon color="red darken-1">clear</v-icon>
-									</v-btn>
-								</v-flex>
-							</v-layout>
+						<td> <v-icon  small color="success">{% if user.is_staff %}done{% endif %}</v-icon></td>
+						<td class="justify-center layout px-0">
+							<v-btn icon ripple href="{% url 'change' user.pk %}">
+								<v-icon
+									small
+									color="warning"
+								>
+									edit
+								</v-icon>
+							</v-btn>
+							<v-btn icon ripple>
+								<v-icon
+									small
+									color="error"
+								>
+									delete
+								</v-icon>
+							</v-btn>
 						</td>
 					</tr>
 				{% endfor %}
@@ -111,6 +116,7 @@
 								{% endif %}
 							</v-flex>
 						</v-layout>
+
 					</td>
 				</tr>
 			</tfoot>
@@ -119,8 +125,13 @@
 	</div>	
 {% else %}
 	<template>
-		<div style="width: 100%">
-			<v-alert :value="true" type="info" transition="scale-transition" dismissible>
+		<div style="width: 97%; margin: auto">
+			<v-alert 
+				:value="true" 
+				type="info" 
+				transition="scale-transition" 
+				dismissible
+			>
 					No se encontraron usuarios registrados en el sistema.
 			</v-alert>
 		</div>

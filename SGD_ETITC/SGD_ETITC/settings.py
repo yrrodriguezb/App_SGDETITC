@@ -37,9 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'apps.administration',
     'apps.authentication',
     'apps.core',
-    'apps.settings',
+    'apps.profile',
+    
 ]
 
 MIDDLEWARE = [
@@ -63,6 +65,7 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+                'django.template.context_processors.media',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -141,8 +144,13 @@ LOGIN_REDIRECT_URL = '/core/'
 # Send EMail
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
 EMAIL_HOST = 'smtp.gmail.com'
+
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER") 
+
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+
 EMAIL_PORT = 587
+
 EMAIL_USE_TLS = True

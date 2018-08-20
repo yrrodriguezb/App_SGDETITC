@@ -11,7 +11,11 @@
 	<!-- Configuracion vue and vuerify  -->
 
 	<title>{% block title %}{% endblock %}</title>
+
 	{% load static %}
+
+	{% block style %}
+	{% endblock style %}
 
 </head>
 <body>
@@ -23,7 +27,7 @@
 						:size="130"
 						:width="7"
 						color="grey"
-						indeterminate
+						:indeterminate="!indeterminate"
 					></v-progress-circular>
 				</v-flex>
 			</v-layout>
@@ -33,19 +37,7 @@
 			<v-navigation-drawer fixed :clipped="$vuetify.breakpoint.mdAndUp" app v-model="drawer">
 				<v-list dense>
 					<template v-for="item in routes">
-						<v-layout row v-if="item.heading" align-center :key="item.heading">
-							<v-flex xs6>
-								<v-subheader v-if="item.heading">
-									${ item.heading }
-								</v-subheader>
-							</v-flex>
-
-							<v-flex xs6 class="text-xs-center">
-								<a href="#!" class="body-2 black--text">EDIT</a>
-							</v-flex>
-						</v-layout>
-
-						<v-list-group v-else-if="item.children" v-model="item.model" :key="item.text"
+						<v-list-group v-if="item.children" v-model="item.model" :key="item.text"
 							:prepend-icon="item.model ? item.icon : item['icon-alt']" append-icon="" >
 
 							<v-list-tile slot="activator">
@@ -82,6 +74,7 @@
 							</v-list-tile-content>
 
 						</v-list-tile>
+						<v-divider inset></v-divider>
 					</template>
 				</v-list>
 			</v-navigation-drawer>
@@ -102,33 +95,54 @@
 
 				<v-spacer></v-spacer>
 
-				<v-btn icon>
-					<v-icon>apps</v-icon>
-				</v-btn>
+				<v-card color="blue darken-3" flat >
+					<v-card-text class="py-0">
+						<strong>{{ request.user.username | upper }}</strong>
+					</v-card-text>
+				</v-card>
 
-				<v-btn icon>
-					<v-icon>notifications</v-icon>
-				</v-btn>
+				<v-menu bottom left>
+					<v-btn
+						slot="activator"
+						dark
+						icon
+					>
+						<v-icon>more_vert</v-icon>
+					</v-btn>
 
-				<v-btn icon large>
-					<v-avatar size="32px" tile>
-						<img
-							src="https://github.com/vuetifyjs.png?size=100"
-							alt="Vuetify"
+					<v-list dense>
+						<v-subheader two-line>
+              {{ request.user.username | upper }}
+            </v-subheader>
+
+						<v-list-tile 
+							v-for="(route, i) in subroutes"
+							:key="i"
+							@click=""
+							:href="route.url"
 						>
-					</v-avatar>
-				</v-btn>
+							<v-list-tile-content>
+								<v-list-tile-title>
+									${ route.text }
+								</v-list-tile-title>
+							</v-list-tile-content>
+						</v-list-tile>
+					</v-list>
+				</v-menu>
+
+        
 			</v-toolbar>
 
 			<v-content>
 				<v-container fluid>
-					<v-layout>
+					<v-layout row wrap white>
 						{% block content %}
 						
 						{% endblock content %}
 					</v-layout>
 				</v-container>
 			</v-content>
+			
 			<v-btn
 				fab
 				bottom
@@ -140,6 +154,7 @@
 			>
 				<v-icon>email</v-icon>
 			</v-btn>
+
 			<v-dialog v-model="dialog" width="800px">
 				<v-card>
 					<v-card-title
@@ -158,7 +173,7 @@
 											prepend-icon="subject"
 											label="Asunto"
 											v-model="sendMail.subject"
-											:rules="rules.subjectRules" 
+											:rules="rules.empty" 
 										></v-text-field>
 									</v-layout>
 								</v-flex>
@@ -168,7 +183,7 @@
 										prepend-icon="mail"
 										label="Correo Electronico"
 										v-model="sendMail.from_email"
-										:rules="rules.emailRules"
+										:rules="rules.email"
 									></v-text-field>
 								</v-flex>
 								<v-flex xs12>
@@ -177,7 +192,7 @@
 										prepend-icon="message"
 										label="Mensaje"
 										v-model="sendMail.message"
-										:rules="rules.msgRules"
+										:rules="rules.empty"
 									></v-textarea>
 								</v-flex>
 								<v-flex xs12>
@@ -215,43 +230,41 @@
 	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
-	<script>
+	<script type="text/javascript">
 
-			var getCookie = function(cname){
-				var name = cname + "=";
-				var decodedCookie = decodeURIComponent(document.cookie);
-				var ca = decodedCookie.split(';');
-				for(var i = 0; i <ca.length; i++) {
-						var c = ca[i];
-						while (c.charAt(0) == ' ') {
-								c = c.substring(1);
-						}
-						if (c.indexOf(name) == 0) {
-								return c.substring(name.length, c.length);
-						}
-				}
-				return "";
-			} 
-
-	Vue.options.delimiters = ['${', '}'];
-	Vue.http.interceptors.push(function(request) {
-		request.headers.set('X-CSRFToken', getCookie('csrftoken'));
-	});
-
-	var app = new Vue({
-		el: '#app',
-		computed: {
-			staff(){
-				return "{{ request.user.is_staff }}" == "True";
+		var getCookie = function(cname){
+			var name = cname + "=";
+			var decodedCookie = decodeURIComponent(document.cookie);
+			var ca = decodedCookie.split(';');
+			for(var i = 0; i <ca.length; i++) {
+					var c = ca[i];
+					while (c.charAt(0) == ' ') {
+							c = c.substring(1);
+					}
+					if (c.indexOf(name) == 0) {
+							return c.substring(name.length, c.length);
+					}
 			}
-		},
-		data(){
-      return {
+			return "";
+		} 
+
+		let page = {
+			computed: {
+				staff(){
+					return "{{ request.user.is_staff }}" == "True";
+				}
+			},
+			data: {
 				dialog: false,
 				drawer: null,
 				showProgress: true,
+				indeterminate: false,
 				routes: [],
+				subroutes: [],
 				paginate_by: [],
+				profile: {
+					dialog: true
+				},
 				select_paginate_by: parseInt('{{ paginate_by }}'),
 				sendMail: {
 					subject: '',
@@ -265,86 +278,119 @@
 					indeterminate: false
 				},
 				rules: {
-      		subjectRules: [
-						v => !!v || 'Este campo es obligatorio'
-					],
-					emailRules: [
+					email: [
 						v => !!v || 'Este campo es obligatorio',
-						v => (v &&  /^[_a-z0-9-]+(.[_a-z0-9-]+)*@[a-z0-9-]+(.[a-z0-9-]+)*(.[a-z]{2,4})$/gi.test(v)) || 'El valor no es un correo electronico valido'
+						v => (v && /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test(v)) || 'El valor no es un correo electronico valido' 
 					],
-					msgRules: [
+					empty: [
 						v => !!v || 'Este campo es obligatorio'
 					]
 				},
 				formValid: true
-			}
-		},
-		created() {
-			this.drawer = true;
-			
-			this.$http.get("{% static 'core/json/routes.json' %}").then((res) => {
-				this.routes = res.body.routes;
-			})
-
-			this.paginate_by = [50, 100, 200, 300]
-		},
-		methods: {
-			send(){
-				if (!this.$refs.form.validate())
-					return;
-
-				this.progress.active = true;
-				this.progress.indeterminate = true;
-
-				this.$http.get("{% url 'email'  %}", { params: this.sendMail}).then(res => {
-					this.sendMail.msg = res.body.msg;
-					this.sendMail.value = res.body.ok;
-					this.sendMail.type = res.body.type;
-					this.clear();
-					this.closeAlert();
-				}, res => {
+			},
+			methods: {
+				send(){
+					if (!this.$refs.form.validate())
+						return;
+	
+					this.progress.active = true;
+					this.progress.indeterminate = true;
+	
+					this.$http.get("{% url 'email'  %}", { params: this.sendMail}).then(res => {
+						this.sendMail.msg = res.body.msg;
+						this.sendMail.value = res.body.ok;
+						this.sendMail.type = res.body.type;
+						this.clear();
+						this.closeAlert();
+					}, res => {
+						this.errorSendMail(res);
+					});
+				},
+				errorSendMail(res){
+					this.sendMail.msg = res.statusText;
+					this.sendMail.value = true;
+					this.sendMail.type = "error";
+	
 					this.progress = {
 						active: false,
 						indeterminate: false
 					}
 					this.closeAlert();
 					console.log(res);
-				});
-			},
-			clear(){
-				this.sendMail.subject = '';
-				this.sendMail.from_email = '';
-				this.sendMail.message = '';
-
-				this.progress = {
-					active: false,
-					indeterminate: false
+				},
+				clear(){
+					this.sendMail.subject = '';
+					this.sendMail.from_email = '';
+					this.sendMail.message = '';
+	
+					this.progress = {
+						active: false,
+						indeterminate: false
+					}
+	
+					this.$refs.form.reset()
+				},
+				closeAlert(){
+					setTimeout(() => {
+						this.sendMail.value = false;
+					}, 5000)
+				},
+				openProfileEdit(){
+					this.profile.dialog = true;
 				}
-
-				this.$refs.form.reset()
 			},
-			closeAlert(){
-				setTimeout(() => {
-					this.sendMail.value = false;
-				}, 5000)
+			watch: {
+				
 			}
-		},
-		mounted() {
-			setTimeout(() => {
-				this.showProgress = !this.showProgress;
-			}, 500);
-		},
-		props: {
-			source: String
 		}
-	});
+
+	</script>
+
+	{% block extra_vue_data %}
+	{% endblock extra_vue_data %}
+
+	<!-- configuracion vuejs -->
+	<script type="text/javascript">
 		
+		Vue.options.delimiters = ['${', '}'];
+		Vue.http.options.emulateJSON = true;
+		Vue.http.interceptors.push(function(request) {
+			request.headers.set('X-CSRFToken', getCookie('csrftoken'));
+		});
+
+		let app = new Vue({
+			el: '#app',
+			computed: page.computed,
+			data(){
+				return page.data
+			},
+			created() {
+				this.drawer = false;
+				
+				this.$http.get("{% static 'core/json/routes.json' %}").then((res) => {
+					this.routes = res.body.routes;
+					this.subroutes = res.body.subroutes;
+				})
+	
+				this.paginate_by = [50, 100, 200, 300]
+			},
+			methods: page.methods,
+			mounted() {
+				setTimeout(() => {
+					this.showProgress = !this.showProgress;
+				}, 500);
+			},
+			watch: page.watch,
+			props: {
+				source: String
+			}
+		});	
+
 	</script>
 	
+	{% block extra_vue %}
+	{% endblock extra_vue %}
 	<!-- Configuracion vue and vuerify  -->
 
-	{% block extra_vuejs %}
-	
-	{% endblock extra_vuejs %}
 </body>
 </html>
