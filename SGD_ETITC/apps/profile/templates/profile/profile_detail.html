@@ -29,12 +29,7 @@
     <v-flex xs12 sm6 offset-sm3>
       <v-card>
         <v-card-media
-          {% if profile.avatar %}
-            :src="profile.profile.avatar"
-          {% else %}
-            src="{% static 'profile/img/no-avatar.png' %}"
-          {% endif %}
-          
+          :src="profile.profile.url"
           height="300px"
         >
           <v-layout
@@ -156,7 +151,6 @@
                     clearable 
                     prepend-icon="phone_android" 
                     required
-                    :rules="rules.empty"
                   ></v-text-field>
                 </v-flex>
 
@@ -167,7 +161,7 @@
                     clearable 
                     prepend-icon="phone" 
                     required
-                    :rules="rules.empty">
+                  >
                   </v-text-field>
                 </v-flex>
 
@@ -202,6 +196,7 @@
                       persistent-hint
                       prepend-icon="event"
                       readonly
+                      :rules="rules.empty"
                     ></v-text-field>
                     <v-date-picker v-model="profile.date" no-title @input="profile.menu = false"></v-date-picker>
                   </v-menu>
@@ -277,8 +272,7 @@
         phone: '{{ profile.phone | default_if_none:"" }}',
         cellphone: '{{ profile.cellphone | default_if_none:"" }}',
         birthdate: '{{ profile.birthdate | date:"SHORT_DATE_FORMAT" }}',
-        avatar: null,
-        url: null
+        url: '{% static "profile/img/no-avatar.png" %}'
       },
       rules: {
         first_name: [
@@ -319,7 +313,6 @@
 
   {% if profile.avatar %}
   <script>
-      page.data.profile.profile.avatar = '{{ profile.avatar.url }}';
       page.data.profile.profile.url = '{{ profile.avatar.url }}';
   </script>
   {% endif %}
@@ -345,9 +338,7 @@
     app.closeModalProfile = () => {
       app.profile.dialog = false;
       app.profile.alert.show = false;
-      /* let p = app.profile.profile;
-      app.$refs.formProfile.reset();
-      app.profile.profile = p*/
+      //app.$refs.formProfile.reset();
     }
 
     app.closeProgressProfile = (data) => {
@@ -386,6 +377,10 @@
     }
 
     app.updateProfile = () => {
+
+      if (!app.$refs.formProfile.validate())
+        return false;
+
       app.closeAlertProfile();
       app.showProgressProfile();
 
@@ -397,10 +392,9 @@
           app.profile.profile.phone = res.body.data.phone;
           app.profile.profile.cellphone = res.body.data.cellphone;
           app.date = app.parseDate(data.birthdate)
+          
           if (res.body.file)
-            app.profile.profile.avatar = `{{MEDIA_URL}}profiles/${res.body.file}`;
-          else
-            app.profile.profile.avatar = app.profile.profile.url
+            app.profile.profile.url = `{{MEDIA_URL}}profiles/{{ request.user.username }}/${res.body.file}`;
         }
 
         app.closeProgressProfile(res.body);

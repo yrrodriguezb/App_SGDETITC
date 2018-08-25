@@ -29,11 +29,11 @@ def update_profile(request, pk):
     try:
         if request.method == 'POST':
             profile = get_object_or_404(Profile, pk=pk)
-            user_by_email = User.objects.only('id').filter(email=request.POST.get('email')).exclude(username=request.user)
+            user_by_email = User.objects.only('id').filter(email=request.POST.get('email', None)).exclude(username=request.user)
            
             if profile.user != request.user:
                 json_response = { 'ok': False, 'msg': 'No puede modificar el perfil de usuario.', 'alert': alert_data }
-            elif user_by_email.exists():
+            elif request.POST.get('email', '') is not '' and user_by_email.exists():
                 json_response = { 'ok': False, 'msg': 'El email no se encuentra disponible.', 'alert': alert_data }
             else:
                 form = ProfileForm(request.POST, files=request.FILES, instance=profile)
@@ -50,6 +50,7 @@ def update_profile(request, pk):
                         json_response.update({ 'file': request.FILES['file'].name })
                 else:
                     json_response = { 'ok': False, 'msg': 'Los datos del formulario no son validos.', 'alert': alert_data }
+                    json_response.update({'errors': form.errors})
     except:
         alert_data = { 'icon': 'warning', 'color': 'error' }
         json_response = { 'ok': False, 'msg': 'Ocurrio un error al intentar guardar los cambios.' , 'alert': alert_data  }

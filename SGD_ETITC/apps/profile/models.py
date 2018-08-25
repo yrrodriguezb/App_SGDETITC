@@ -7,7 +7,7 @@ from django.dispatch import receiver
 def custom_upload_to(instance, filename):
     old_instance = Profile.objects.get(pk=instance.pk)
     old_instance.avatar.delete()
-    return 'profiles/' + filename
+    return 'profiles/{username}/{filename}'.format(username=instance.user.username, filename=filename)
 
 
 class Profile(models.Model):
