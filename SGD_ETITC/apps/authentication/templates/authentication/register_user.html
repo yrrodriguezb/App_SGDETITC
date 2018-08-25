@@ -2,13 +2,12 @@
 
 {% load static %}
 
-{% block title %}Cambiar Contraseña{% endblock %}
+{% block title %}Registrarme{% endblock %}
 
 {% block content %}
 <v-flex  xs12 sm8 md5 lg4>
   <v-card fluid grid-list-lg pa-4>
     <v-form 
-      action="{% url 'password_change' %}"
       method="POST" 
       ref="form" 
       v-model="valid" 
@@ -19,12 +18,11 @@
       <v-card-title>
         <div>
           <h3 style="text-align: center" class="headline mb-0">
-						Cambiar Contraseña
+						Registrarme
 					</h3> <br>
           <div>
-            Por favor ingrese su contraseña anterior por razones de seguridad, 
-            y luego ingrese su nueva contraseña dos veces para que podamos 
-            verificar que la haya ingresado correctamente.
+            Por favor primero introduzca un nombre de usuario y una contraseña. 
+            Luego podrá editar el resto de información del usuario.
           </div>
         </div>
       </v-card-title>
@@ -34,35 +32,34 @@
       <v-card-text>
         <v-text-field 
           class="mb-2"
-          v-model="old_password"
+          v-model="username"
           prepend-icon="lock" 
-          name="old_password" 
-          label="Contraseña Antigua"
-          type="password"
-          :rules="rules.password"
-          :error-messages="error_messages.old_password"
+          name="username" 
+          label="Nombre de Usuario"
+          :rules="rules.username"
+          :error-messages="error_messages.username"
           required>
         </v-text-field>
         <v-text-field 
           class="mb-2"
-          v-model="new_password"
+          v-model="password"
           prepend-icon="lock" 
-          name="new_password1" 
+          name="password1" 
           label="Contraseña Nueva" 
           type="password"
           :rules="rules.password"
-          :error-messages="error_messages.new_password"
+          :error-messages="error_messages.password_user"
           required>
         </v-text-field>
         <v-text-field 
           class="mb-2"
-          v-model="new_password_confirm"
+          v-model="password_confirm"
           prepend-icon="lock" 
-          name="new_password2" 
-          label="Contraseña Nueva (Confirmación)" 
+          name="password2" 
+          label="Confirmar Contraseña" 
           type="password"
-          :rules="rules.password_confirm"
-          :error-messages="error_messages.new_password_confirm"
+          :rules="rules.password_user_confirm"
+          :error-messages="error_messages.password_user_confirm"
           required>
         </v-text-field>
       </v-card-text>
@@ -78,11 +75,12 @@
       <v-card-text>
         <v-btn 
           type="submit" 
-          color="info" 
-          flat
-          :disabled="!valid"
-          @click.prevent="submit">
-          Cambiar Contraseña
+          @click.prevent="submit" 
+          :disabled="!valid" 
+          flat 
+          color="primary"
+        >
+          Registrarme
         </v-btn>
 
         <v-btn 
@@ -110,12 +108,12 @@
           class="headline teal white--text"
           primary-title
         >
-          Cambiar Contraseña
+          Registrarme
         </v-card-title>
 
         <v-card-text>
           <p>
-          Su contraseña se he actualizado correctamente.
+          El usuario se ha regisrado correctamente, por favor hacer clic en <strong>Iniciar Sesión</strong> para continuar.
           </p>
         </v-card-text>
 
@@ -126,17 +124,9 @@
             color="teal"
             flat
             @click="dialog = false"
-          >
-            Aceptar
-          </v-btn>
-
-          <v-btn
-            color="teal"
-            flat
-            @click="dialog = false"
             href="{% url 'login' %}"
           >
-            Ver sitio
+            Iniciar Sesión
           </v-btn>
         </v-card-actions>
       </v-card>

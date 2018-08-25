@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+	<!-- Configuracion vue and vuerify  -->
+	<link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
+  <!-- Configuracion vue and vuerify  -->
+  
+  <style type="text/css">
+    ul.errorlist {
+      padding-left: 0;
+    }
+
+    ul.errorlist li {
+      list-style: none;
+    }
+  </style>
+
+  <title>
+    {% block title %}
+    {% endblock title %}
+  </title>
+</head>
+<body>
+  
+  <div id="app">
+		<v-app id="inspire">
+      <template>
+        <v-container grid-list-md fill-height>
+          <v-layout row wrap justify-center align-center>
+            {% block content %}         
+            {% endblock content %}
+          </v-layout>
+        </v-container>
+      </template>
+		</v-app>
+  </div>
+  
+  <!-- Configuracion vue and vuerify  -->
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
+	<script type="text/javascript">
+	
+	new Vue({
+		el: '#app',
+    delimiters: ['${', '}'],
+    data () {
+      return {     
+        dialog: true,
+        valid: true,
+        show: false,
+        email: '',
+        username: '',
+        password: '',
+        old_password: '',
+        new_password: '',
+        new_password_confirm: '',
+        password_confirm: '',
+        progress: {
+          indeterminate: false,
+          active: false,
+          show: false
+        },
+        rules: {
+          username: [
+            v => !!v || 'El nombre de usuario es requerido',
+            v => (v && v.length <= 20) || 'El nombre de usuario debe ser mayor a 20 caracteres'
+          ],
+          email: [
+            v => !!v || 'Este campo es requerido.',
+            v => (v && /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test(v)) || 'El valor no es un correo electrónico valido.' 
+          ],
+          password: [
+            v => !!v || 'Este campo es requerido.',
+            v => v.length >= 8 || 'La contraseña debe ser mayor a 8 caracteres.'
+          ],
+          password_confirm: [
+            v => !!v || 'Este campo es requerido.',
+            v => v.length >= 8 || 'La contraseña debe ser mayor a 8 caracteres.',
+            v => v == this.new_password_confirm || 'Las contraseñas no son iguales'  
+          ],
+          password_user_confirm: [
+            v => !!v || 'Este campo es requerido.',
+            v => v.length >= 8 || 'La contraseña debe ser mayor a 8 caracteres.',
+            v => v == this.password || 'Las contraseñas no son iguales'  
+          ]
+        },
+        error_messages: {
+          username: '{{ form.username.errors }}',
+          password: '{{ form.password.errors }}',
+          old_password: '{{ form.old_password.errors }}',
+          new_password: '{{ form.new_password1.errors }}',
+          new_password_confirm: '{{ form.new_password2.errors }}',
+          password_confirm: '{{ form.new_password2.errors }}',
+          password_user: '{{ form.password1.errors }}',
+          password_user_confirm: '{{ form.password2.errors }}'    
+        },
+        messages: {
+          new_password: '{{ form.new_password1.help_text  | safe  }}'
+        }
+      }
+    },
+    methods: {
+      back () {
+        window.history.back();
+      },
+      submit () {
+        if (this.$refs.form.validate()) {
+          this.show_progress(true);
+          this.valid = false;
+
+          setTimeout(() => {
+            this.$refs.form.$el.submit();
+          }, 2000)
+        }
+      },
+      show_progress(value){
+        this.progress.active = value;
+        this.progress.indeterminate = value;
+        this.progress.show = value;
+      }
+    },
+    created(){
+      this.show_progress(false);
+    }
+	});
+	</script>
+
+</body>
+</html>

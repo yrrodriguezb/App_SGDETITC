@@ -1,4 +1,6 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.generic.detail import DetailView
@@ -8,16 +10,18 @@ from .forms import ProfileForm
 from .models import Profile
 
 
-class ProfileView(DetailView):
+class ProfileView(LoginRequiredMixin, DetailView):
     model = Profile
     context_object_name = 'profile'
     template_name = 'profile/profile_detail.html'
     
 
     def get_object(self):
-        return get_object_or_404(Profile, user__username=self.request.user.username)
+        profile = get_object_or_404(Profile, user__username=self.request.user.username)
+        return profile
 
 
+@login_required
 def update_profile(request, pk):
     alert_data = { 'icon': 'warning', 'color': 'error' }
     json_response = { 'ok': False, 'msg': 'El metodo de petición es incorrecto.', 'alert': alert_data }

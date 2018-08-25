@@ -18,17 +18,28 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 
-from apps.authentication.views import LoginView, LogoutView, PasswdChangeView
-
+from apps.authentication.views import (
+    LoginView, 
+    LogoutView, 
+    PasswdChangeView, 
+    PasswdResetView,
+    PasswdResetConfirmView,
+    PasswdResetDoneView,
+    UserCreateView
+)
 
 urlpatterns = [
     path('', LoginView.as_view(), name='login'),
     path('admin/', admin.site.urls),
+    path('administration/', include('apps.administration.urls')),
     path('core/', include('apps.core.urls')),
     path('logout/', LogoutView.as_view(), name='logout'),
-    path('password_change/', PasswdChangeView.as_view(), name='passwd_change'),
+    path('password_change/', PasswdChangeView.as_view(), name='password_change'),
+    path('password_reset/', PasswdResetView.as_view(), name='password_reset'),
+    path('password_reset/<uidb64>/<token>/',PasswdResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('password_reset/done/', PasswdResetDoneView.as_view(), name='password_reset_complete'),
     path('profile/', include('apps.profile.urls')),
-    path('administration/', include('apps.administration.urls')),
+    path('register_me', UserCreateView.as_view(), name='register_me'),   
 ]
 
 if settings.DEBUG:

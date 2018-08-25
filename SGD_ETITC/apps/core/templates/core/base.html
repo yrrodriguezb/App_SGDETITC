@@ -134,7 +134,7 @@
 			</v-toolbar>
 
 			<v-content>
-				<v-container fluid>
+				<v-container fluid fill-height>
 					<v-layout row wrap white>
 						{% block content %}
 						
@@ -231,6 +231,13 @@
 	<script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
 	<script type="text/javascript">
+
+		Vue.options.delimiters = ['${', '}'];
+		Vue.http.options.emulateJSON = true;
+		Vue.http.interceptors.push(function(request) {
+			request.headers.set('X-CSRFToken', getCookie('csrftoken'));
+		});
+
 
 		var getCookie = function(cname){
 			var name = cname + "=";
@@ -352,12 +359,6 @@
 	<!-- configuracion vuejs -->
 	<script type="text/javascript">
 		
-		Vue.options.delimiters = ['${', '}'];
-		Vue.http.options.emulateJSON = true;
-		Vue.http.interceptors.push(function(request) {
-			request.headers.set('X-CSRFToken', getCookie('csrftoken'));
-		});
-
 		let app = new Vue({
 			el: '#app',
 			computed: page.computed,
