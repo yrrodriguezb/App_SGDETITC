@@ -16,6 +16,7 @@ Including another URLconf
 
 from django.conf import settings
 from django.contrib import admin
+from django.contrib.auth.decorators import login_required
 from django.urls import path, include
 
 from apps.authentication.views import (
@@ -27,6 +28,11 @@ from apps.authentication.views import (
     PasswdResetDoneView,
     UserCreateView
 )
+
+admin.site.login = login_required(admin.site.login)
+admin.site.site_header = "SGD ETITC - Admin"
+admin.site.site_title = "SGD ETITC - Portal"
+admin.site.index_title = "Bienvenido al Portal SGD ETITC"
 
 urlpatterns = [
     path('', LoginView.as_view(), name='login'),

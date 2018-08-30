@@ -32,7 +32,7 @@
 				></v-select>
 			</v-flex>
 			<v-flex xs2 mt-2>
-				<v-btn type="submit" color="success">
+				<v-btn type="submit" color="success" class="white--text">
 					Buscar
 				</v-btn>
 			</v-flex>
@@ -61,7 +61,7 @@
 						<td>{{ user.email }}</td>
 						<td> <v-icon  small color="success">{% if user.is_staff %}done{% endif %}</v-icon></td>
 						<td class="justify-center layout px-0">
-							<v-btn icon ripple href="{% url 'change' user.pk %}">
+							<v-btn icon ripple slot="activator" @click="getUser({{ user.pk }}, true)">
 								<v-icon
 									small
 									color="warning"
@@ -69,7 +69,7 @@
 									edit
 								</v-icon>
 							</v-btn>
-							<v-btn icon ripple>
+							<v-btn icon ripple slot="activator" @click="getUser({{ user.pk }}, false)">
 								<v-icon
 									small
 									color="error"
@@ -138,4 +138,251 @@
 	</template>
 {% endif %}
 </div>
+
+{% comment "Modal Eliminar Usuario" %}
+{% endcomment %}
+
+<template>
+  <v-layout row justify-center>
+    <v-dialog v-model="users.dialog" persistent max-width="500px">
+      <v-card >
+        <v-card-title>
+					<h4 v-if="users.del_upd" style="text-align: center;" class="headline mb-0 ml-4">
+						Actualizar Usuario
+					</h4> 
+					<h4 v-else style="text-align: center;" class="headline mb-0 ml-4">
+						Eliminar Usuario
+					</h4> 
+				</v-card-title>
+	
+				<v-divider></v-divider>
+
+        <v-card-text v-if="users.del_upd">
+          <v-container grid-list-md>
+            <v-layout wrap>
+              <v-flex xs12 sm6>
+								<v-text-field 
+									v-model="users.user.first_name"
+									label="Nombres" 
+									required>
+								</v-text-field>
+              </v-flex>
+              <v-flex xs12 sm6>
+								<v-text-field 
+									v-model="users.user.last_name"
+									label="Apellidos">
+								</v-text-field>
+              </v-flex>
+              <v-flex xs12>
+								<v-text-field
+									v-model="users.user.username"
+									label="Nombre de Usuario" 
+									readonly
+									disabled
+									required>
+								</v-text-field>
+              </v-flex>
+              <v-flex xs12>
+								<v-text-field 
+									v-model="users.user.email"
+									label="Correo electronico" 
+									type="email" 
+									required></v-text-field>
+              </v-flex>
+              <v-flex xs12 sm6>
+								<v-select
+									v-model="users.user.is_staff"
+									:items="[{ text: 'Habilitar', value: true }, { text: 'Deshabilitar', value: false }]"
+									item-text="text"
+          				item-value="value"
+                  label="Staff"
+                  required
+                ></v-select>
+              </v-flex>
+              <v-flex xs12 sm6>
+								<v-select
+									v-model="users.user.is_active"
+									:items="[{ text: 'Activo', value: true }, { text: 'Inactivo', value: false }]"
+									item-text="text"
+          				item-value="value"
+                  label="Estado"
+                  required
+                ></v-select>
+							</v-flex>
+            </v-layout>
+          </v-container>
+				</v-card-text>
+
+				<v-card-text v-else>
+						¿Está usted seguro que quiere eliminar el usuario seleccionado? 
+						Todos los objetos y sus elementos relacionados serán borrados.<br/><br>
+
+						<strong>Usuario: ${users.user.username}</strong><br/>
+						<strong>Nombre: ${users.user.first_name} ${users.user.last_name}</strong><br/>
+						<strong>E-mail: ${users.user.email}</strong><br/>
+				</v-card-text>
+
+				<v-card-text style="padding: 0 16px 16px 16px !important">
+					<v-flex xs12>
+						<v-alert 
+							v-show="users.alert.show"
+							:value="users.alert.value"
+							:color="users.alert.color"
+							:icon="users.alert.icon"
+							outline
+						>
+							${ users.alert.msg }
+						</v-alert>
+					</v-flex>
+				</v-card-text>
+
+				<v-progress-linear
+					v-show="users.progress.show" 
+					:indeterminate="users.progress.indeterminate"
+					:active="users.progress.active"
+					color="success"
+				>
+				</v-progress-linear>
+				
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" flat @click.native="close_dialog_users">Cerrar</v-btn>
+          <v-btn color="blue darken-1" flat @click.native="save_change_users">Guardar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-layout>
+</template>
+
 {% endblock content %}
+
+{% block extra_vue_data %}
+<script type="text/javascript">
+
+	page.data.users = {
+		dialog: false,
+		del_upd: false,
+		user: {
+			id: null,
+			first_name: '',
+			last_name: '',
+			username: '',
+			email: '',
+			is_staff: null,
+			is_active: null
+		},
+		alert: {
+			show: false,
+			value: false,
+			color: 'success',
+			icon: null,
+			msg: ''
+		},
+		progress: {
+			show: false, 
+			indeterminate: false,
+			active: false
+		}
+	}
+
+</script>
+{% endblock extra_vue_data %}
+
+{% block extra_vue %}
+<script type="text/javascript">
+
+	app.save_change_users = () => {
+		if (app.users.del_upd)
+			app.update_user();
+		else
+			app.delete_user();
+	}
+	
+	app.getUser = (id, del_upd) => {
+		app.users.del_upd = del_upd;
+		app.users.alert.show = false;
+
+		let url = '{% url "get_user" pk="id" %}'.replace(/id/, id.toString());
+
+		app.$http.get(url).then(res => { 
+			if (res.body.ok)
+				app.setDataUser(res.body.data); 
+			else 
+				app.showAlert(res.body)
+			
+			app.users.dialog = true;
+		}, err =>  { 
+			console.log(err) 
+		})
+	}
+
+	app.confirmDeleteUser = (id) => {
+		app.users.del_upd = false;
+		app.users.alert.show = false;
+		app.users.dialog = true;
+	}
+
+	app.update_user = () => {
+		app.users.alert.show = false;
+		app.showProgressUser(true);
+
+		let id = app.users.user.id;
+		let url = '{% url "update_user" pk="id" %}'.replace(/id/, id.toString());
+
+		app.$http.post(url, app.users.user).then((res) => {
+			app.showProgressUser(false, 2000);
+			app.showAlertUser(res.body);
+		}, err => {
+			app.showProgressUser(false, 2000);
+		})
+	}
+
+	app.delete_user = () => {
+		app.users.alert.show = false;
+		app.showProgressUser(true);
+
+		let id = app.users.user.id;
+		let url = '{% url "delete_user" pk="id" %}'.replace(/id/, id.toString());
+
+		app.$http.delete(url, { pk: app.users.user.id }).then((res) => {
+			app.showProgressUser(false, 2000);
+			app.showAlertUser(res.body);
+		}, err => {
+			app.showProgressUser(false, 2000);
+		})
+	}
+
+	app.showProgressUser = (value, time) => {
+		setTimeout(() => {
+			app.users.progress.active = value;
+			app.users.progress.show = value;
+			app.users.progress.indeterminate = value;
+		}, time || 0)
+	}
+
+	app.showAlertUser = (data)  => {
+		setTimeout(() => {
+			app.users.alert.show = true;
+			app.users.alert.value = true;
+			app.users.alert.msg = data.msg;
+			app.users.alert.icon = data.ok ? 'check_circle' : 'warning';
+			app.users.alert.color = data.ok ? 'success' : 'error';
+		}, 2000)
+	}
+	
+	app.setDataUser = (data) => {
+		app.users.user.id = data.pk;
+		app.users.user.username = data.user.username;
+		app.users.user.first_name = data.user.first_name;
+		app.users.user.last_name = data.user.last_name;
+		app.users.user.email = data.user.email;
+		app.users.user.is_active = data.user.is_active;
+		app.users.user.is_staff = data.user.is_staff;
+	}
+
+	app.close_dialog_users = (id) => {
+		app.users.dialog = false;
+		location.reload()
+	}
+</script>
+{% endblock extra_vue %}

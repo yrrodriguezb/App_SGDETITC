@@ -52,6 +52,8 @@ Iniciar Sesión
 					:error-messages="error_messages.password"
 					required>
 				</v-text-field>
+
+				<p class="error--text">{{ form.non_field_errors }}</p>
 			</v-card-text>
 
       <v-progress-linear
@@ -101,6 +103,6 @@ Iniciar Sesión
 			</v-slide-y-transition>
 			
     </v-card>
-  </v-form>
+	</v-form>
 </v-flex>
 {% endblock content %}

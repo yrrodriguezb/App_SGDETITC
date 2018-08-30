@@ -303,7 +303,7 @@
 					this.progress.active = true;
 					this.progress.indeterminate = true;
 	
-					this.$http.get("{% url 'email'  %}", { params: this.sendMail}).then(res => {
+					this.$http.post("{% url 'email'  %}", this.sendMail).then(res => {
 						this.sendMail.msg = res.body.msg;
 						this.sendMail.value = res.body.ok;
 						this.sendMail.type = res.body.type;
@@ -371,6 +371,9 @@
 				this.$http.get("{% static 'core/json/routes.json' %}").then((res) => {
 					this.routes = res.body.routes;
 					this.subroutes = res.body.subroutes;
+
+					if (!this.staff)
+						this.routes = this.routes.filter((route) => !route.admin)
 				})
 	
 				this.paginate_by = [50, 100, 200, 300]

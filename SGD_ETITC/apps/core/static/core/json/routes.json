@@ -20,7 +20,6 @@
 			"admin": true,
 			"model": false,
 			"children": [
-				{ "text": "Administrar Cuenta" },
 				{	"text": "Usuarios",	"url": "/administration/users/" },
 				{	"text": "Panel de Administracion","url": "/admin/" }
 			]
