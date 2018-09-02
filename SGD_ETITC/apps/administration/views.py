@@ -27,6 +27,7 @@ class UserListView(LoginRequiredMixin, ListView):
         if query:
             qset = (
                 Q(username__icontains=query) |
+                Q(first_name__icontains=query) |
                 Q(last_name__icontains=query)
             )
             results = User.objects.filter(qset).distinct()

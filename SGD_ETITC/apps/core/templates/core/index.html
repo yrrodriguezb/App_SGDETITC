@@ -3,3 +3,201 @@
 {% load static %}
 
 {% block title %}Inicio{% endblock %}
+
+{% block style %}
+<style>
+  .group {
+    display: flex;
+    flex: 1;
+    justify-content: space-around;
+  }
+</style>
+{% endblock style %}
+
+{% block content %}
+<template>
+  <v-content style="padding: 0 !important">
+    <v-toolbar class="white">
+      <v-toolbar-title v-text="'GESTIÓN DOCUMENTAL - ETITC'">
+      </v-toolbar-title>
+
+      <v-spacer></v-spacer>
+      
+      <v-tooltip left>
+        <v-btn slot="activator" icon href="http://www.itc.edu.co/es" target="_blank">
+            <img src="{% static 'core/img/Logo_ETITC.jpeg' %}" alt="logo ETITC" width="41px" height="33px" >
+        </v-btn>
+        <span>Escuela Tecnologica Instituto Tecnico central</span>
+      </v-tooltip>
+    </v-toolbar>
+    <section>
+        <v-parallax src="{% static 'core/img/fondo.jpg'  %}" height="600">
+          <v-layout column align-center justify-center
+          >
+            <h1 class="white--text mb-3 display-1 text-xs-center">
+              Realiza tu matricula academica desde cualquier lugar
+            </h1>
+            <v-btn
+              class="blue lighten-2 mt-1"
+              dark
+              large
+              href="{% url 'home' %}"
+            >
+              Empezar
+            </v-btn>
+          </v-layout>
+        </v-parallax>
+    </section>
+
+    <section>
+      <v-layout
+        column
+        wrap
+        class="my-1"
+        align-center
+      >
+        <v-flex xs12 sm4>
+          <div class="text-xs-center">
+            <h2 class="headline">
+              La mejor manera de empezar a radicar tus documentos
+            </h2>
+            <span class="subheading">
+              Te facilitasmos el proceso con la ayuda de las TIC
+            </span>
+          </div>
+        </v-flex>
+        <v-flex xs12>
+          <v-container grid-list-xl>
+            <v-layout row wrap align-center>
+              <v-flex xs12 md4 d-flex>
+                <v-card class="elevation-0 transparent">
+                  <v-card-text class="text-xs-center">
+                    <v-icon x-large class="blue--text text--lighten-2">folder</v-icon>
+                  </v-card-text>
+                  <v-card-title primary-title class="layout justify-center">
+                    <div class="headline text-xs-center">Organizamos tus documentos</div>
+                  </v-card-title>
+                  <v-card-text>
+                    Gestionamos tus documentos de una forma facil y agil para mantener
+                    un orden y poder realizar una indexación de tal manera que se controle la 
+                    forma de encontrar tus archivos sin ocupar muchos recursos de tu computadora.
+                  </v-card-text>
+                </v-card>
+              </v-flex>
+              <v-flex xs12 md4 d-flex>
+                <v-card class="elevation-0 transparent">
+                  <v-card-text class="text-xs-center">
+                    <v-icon x-large class="blue--text text--lighten-2">cloud_download</v-icon>
+                  </v-card-text>
+                  <v-card-title primary-title class="layout justify-center">
+                    <div class="headline">Obten tus certificados</div>
+                  </v-card-title>
+                  <v-card-text>
+                    Facilitamos la forma de obtener tus certificados sin tener la necesidad
+                    de acercarte a nuestras instalaciones y realzar todo este porceso presencialmente
+                    <br><br>
+                  </v-card-text>
+                </v-card>
+              </v-flex>
+              <v-flex xs12 md4 d-flex>
+                <v-card class="elevation-0 transparent">
+                  <v-card-text class="text-xs-center">
+                    <v-icon x-large class="blue--text text--lighten-2">attachment</v-icon>
+                  </v-card-text>
+                  <v-card-title primary-title class="layout justify-center">
+                    <div class="headline text-xs-center">Gestiona tu matricula academica</div>
+                  </v-card-title>
+                  <v-card-text>
+                    Te damos la facilidad de tramitar tu documentación para legalizar tu matricula academica
+                    de forma segura ahorrando un gran trabajo para los usuarios que relizan este trabajo presencialmente.
+                    <br><br>
+                  </v-card-text>
+                </v-card>
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-flex>
+      </v-layout>
+    </section>
+
+    <section>
+      <v-parallax src="{% static 'core/img/fondo_alt.jpg' %}" height="380">
+        <v-layout column align-center justify-center>
+          <div class="display-1 white--text mb-3 text-xs-center">
+            Solicitar tu certificado de estudio jamas habia sido tan facil
+          </div>
+          <v-btn
+            class="blue lighten-2 mt-5"
+            dark
+            large
+            href="/pre-made-themes"
+          >
+            Solicitar
+          </v-btn>
+        </v-layout>
+      </v-parallax>
+    </section>
+
+    <section>
+      <v-container grid-list-xl>
+        <v-layout row wrap justify-center class="my-5">
+          <v-flex xs12 sm4>
+            <v-card class="elevation-0 transparent">
+              <v-card-title primary-title class="layout justify-center">
+                <div class="headline">ETITC Información</div>
+              </v-card-title>
+              <v-card-text>
+                La Escuela Tecnológica Instituto Técnico Central por sus siglas ETITC. 
+                Es un instituto de formación técnica y centro de educación superior de carácter público, 
+                fundado por los Hermanos de La Salle el 9 de febrero de 1905. 
+                Administrado por el Distrito Lasallista de Bogotá desde 1928 y el Ministerio 
+                de Educación Nacional de Colombia.
+              </v-card-text>
+            </v-card>
+          </v-flex>
+          <v-flex xs12 sm4 offset-sm1>
+            <v-card class="elevation-0 transparent">
+              <v-card-title primary-title class="layout justify-center">
+                <div class="headline">Contáctanos</div>
+              </v-card-title>
+              <v-card-text>
+                  Queremos que te pongas en contacto con nosotros para compartir tus comentarios, 
+                  opiniones y necesidades. Según la información que necesites, puedes hacerlo mediante 
+                  las siguientes opciones: 
+              </v-card-text>
+              <v-list class="transparent">
+                <v-list-tile>
+                  <v-list-tile-action>
+                    <v-icon class="blue--text text--lighten-2">phone</v-icon>
+                  </v-list-tile-action>
+                  <v-list-tile-content>
+                    <v-list-tile-title>051-3443000</v-list-tile-title>
+                  </v-list-tile-content>
+                </v-list-tile>
+                <v-list-tile>
+                  <v-list-tile-action>
+                    <v-icon class="blue--text text--lighten-2">place</v-icon>
+                  </v-list-tile-action>
+                  <v-list-tile-content>
+                    <v-list-tile-title>Bogotá, Colombia. Calle 13 # 16 - 74</v-list-tile-title>
+                  </v-list-tile-content>
+                </v-list-tile>
+                <v-list-tile>
+                  <v-list-tile-action>
+                    <v-icon class="blue--text text--lighten-2">email</v-icon>
+                  </v-list-tile-action>
+                  <v-list-tile-content>
+                    <v-list-tile-title>mesadeayuda@itc.edu.co</v-list-tile-title>
+                  </v-list-tile-content>
+                </v-list-tile>
+              </v-list>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-container>
+    </section>
+  </v-content>
+</template>
+{% endblock content %}
+
+

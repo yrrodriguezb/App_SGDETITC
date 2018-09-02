@@ -18,6 +18,7 @@
 					value="{{ params.q }}"
 					prepend-icon="search"
 					color="success"
+					messages="Busqueda por Nombres, Apellidos y Usuario."
 				></v-text-field>
 			</v-flex>
 			<v-flex xs1 ml-2>
@@ -246,8 +247,19 @@
 				
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" flat @click.native="close_dialog_users">Cerrar</v-btn>
-          <v-btn color="blue darken-1" flat @click.native="save_change_users">Guardar</v-btn>
+					<v-btn 
+						:color="users.del_upd ? 'blue darken-1' : 'red darken-1'"
+						v-text="'Cerrar'" 
+						flat 
+						@click.native="close_dialog_users"
+					></v-btn>
+
+					<v-btn 
+						:color="users.del_upd ? 'blue darken-1' : 'red darken-1'"
+						v-text="users.del_upd ? 'Guardar' : 'Eliminar'" 
+						flat 
+						@click.native="save_change_users"
+					></v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -262,6 +274,7 @@
 	page.data.users = {
 		dialog: false,
 		del_upd: false,
+		reload: false,
 		user: {
 			id: null,
 			first_name: '',
@@ -332,6 +345,7 @@
 		app.$http.post(url, app.users.user).then((res) => {
 			app.showProgressUser(false, 2000);
 			app.showAlertUser(res.body);
+			app.users.reload = true;
 		}, err => {
 			app.showProgressUser(false, 2000);
 		})
@@ -347,6 +361,7 @@
 		app.$http.delete(url, { pk: app.users.user.id }).then((res) => {
 			app.showProgressUser(false, 2000);
 			app.showAlertUser(res.body);
+			app.users.reload = true;
 		}, err => {
 			app.showProgressUser(false, 2000);
 		})
@@ -382,7 +397,9 @@
 
 	app.close_dialog_users = (id) => {
 		app.users.dialog = false;
-		location.reload()
+
+		if (app.users.reload)
+			location.reload()
 	}
 </script>
 {% endblock extra_vue %}

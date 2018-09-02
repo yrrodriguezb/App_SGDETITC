@@ -85,17 +85,30 @@
 					<span class="hidden-sm-and-down">SGD - ETITC</span>
 				</v-toolbar-title>
 
-				<v-text-field 
-					flat
-					solo-inverted
-					prepend-icon="search"
-					label="Buscar"
-					class="hidden-sm-and-down"
-				></v-text-field>
+				<v-toolbar-title style="width: 500px" class="ml-0 pt-3">
+					<v-autocomplete 
+						:items="items"
+						:search-input.sync="search" 
+						cache-items
+						class="hidden-sm-and-down"
+						clearable
+						color="info"
+						v-model="route"
+						hide-no-data
+						suffix
+						placeholder="Buscar Ruta ..."
+						return-object
+						solox
+					></v-autocomplete>
+				</v-toolbar-title>
+
+				<v-btn icon @click="go" class="hidden-sm-and-down">
+					<v-icon>search</v-icon>
+				</v-btn>
 
 				<v-spacer></v-spacer>
 
-				<v-card color="blue darken-3" flat >
+				<v-card color="blue darken-3" flat class="hidden-sm-and-down">
 					<v-card-text class="py-0">
 						<strong>{{ request.user.username | upper }}</strong>
 					</v-card-text>
@@ -129,8 +142,6 @@
 						</v-list-tile>
 					</v-list>
 				</v-menu>
-
-        
 			</v-toolbar>
 
 			<v-content>
@@ -157,11 +168,10 @@
 
 			<v-dialog v-model="dialog" width="800px">
 				<v-card>
-					<v-card-title
-						class="grey lighten-4 py-4 title"
-					>
+					<v-card-title class="grey lighten-4 py-4 title">
 						Contactar Administrador
 					</v-card-title>
+
 					<v-container grid-list-sm class="pa-4">
 						<v-layout row wrap>
 							<v-form style="width: 100%" ref="form" v-model="formValid" lazy-validation>
@@ -219,7 +229,7 @@
 					<v-card-actions>
 						<v-spacer></v-spacer>
 						<v-btn flat color="primary" @click="dialog = false; clear()">Cerrar</v-btn>
-						<v-btn flat @click="send" :disabled="!formValid">Enviar</v-btn>
+						<v-btn flat color="primary" @click="send" :disabled="!formValid">Enviar</v-btn>
 					</v-card-actions>
 				</v-card>
 			</v-dialog>
@@ -259,9 +269,23 @@
 			computed: {
 				staff(){
 					return "{{ request.user.is_staff }}" == "True";
+				},
+				items () {
+					return this.entries.map(entry => {
+						const Description = entry.text.length > this.descriptionLimit
+							? entry.text.slice(0, this.descriptionLimit) + '...'
+							: entry.text
+	
+						return Object.assign({}, entry, { Description })
+					})
 				}
 			},
 			data: {
+				descriptionLimit: 60,
+				entries: [],
+				route: null,
+				search: null,
+			
 				dialog: false,
 				drawer: null,
 				showProgress: true,
@@ -296,6 +320,10 @@
 				formValid: true
 			},
 			methods: {
+				go(){
+						if (app.route.url)
+							location.href = app.route.url;
+				},
 				send(){
 					if (!this.$refs.form.validate())
 						return;
@@ -347,7 +375,39 @@
 				}
 			},
 			watch: {
-				
+				search (val) {
+					if (this.items.length > 0) return
+					//this.isLoading = true
+
+					app.routes.forEach(route => {
+						if (route.url)
+							this.entries.push(route);
+
+						if(route.children){
+							route.children.forEach(child => {
+								this.entries.push(child);
+							})
+						}
+					})
+
+					app.subroutes.forEach(route => {
+						if (route.url)
+							this.entries.push(route);
+					})
+
+					this.entries.sort((a, b) => {
+						if (a.text > b.text) {
+							return 1;
+						}
+						else if (a.text < b.text) {
+							return -1;
+						}
+						return 0;
+					})
+
+					this.count = this.entries.length;
+
+				}
 			}
 		}
 
