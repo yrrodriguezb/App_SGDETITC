@@ -321,7 +321,7 @@
 			},
 			methods: {
 				go(){
-						if (app.route.url)
+						if (app.route && app.route.url)
 							location.href = app.route.url;
 				},
 				send(){

@@ -4,13 +4,13 @@
 		{
 			"icon": "keyboard_arrow_up",
 			"icon-alt": "keyboard_arrow_down",
-			"text": "Gestión Documental",
+			"text": "Estudiantes",
 			"model": false,
 			"children": [
-				{	"text": "Consultar"	},
-				{	"text": "Importar"	},
-				{	"text": "Exportar"	},
-				{	"text": "Descargar"	}
+				{	"text": "Certificados Aprobados" },
+				{	"text": "Documentos Aprobados" },
+				{	"text": "Radicación de Documentos"	},
+				{	"text": "Solicitud de Certificados" }
 			]
 		},
 		{

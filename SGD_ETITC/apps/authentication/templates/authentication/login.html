@@ -31,8 +31,9 @@ Iniciar Sesión
       <v-divider></v-divider>
 
       <v-card-text>
-					<v-text-field 
+				<v-text-field 
 					class="mb-2"
+					clearable
 					v-model="username"
 					prepend-icon="person" 
 					name="username" 
@@ -41,7 +42,8 @@ Iniciar Sesión
 					:error-messages="error_messages.username"
 					required>
 				</v-text-field>
-				<v-text-field 
+				<v-text-field
+					clearable
 					class="mb-2"
 					v-model="password"
 					prepend-icon="lock" 

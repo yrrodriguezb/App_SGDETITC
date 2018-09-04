@@ -15,12 +15,12 @@
 {% endblock style %}
 
 {% block content %}
-<template>
+<v-flex  xs12 sm12 md10 lg10 xl8 offset-xl2 offset-lg1 offset-md1>
   <v-content style="padding: 0 !important">
-    <v-toolbar class="white">
+    <v-toolbar class="white elevation-0">
       <v-toolbar-title v-text="'GESTIÓN DOCUMENTAL - ETITC'">
       </v-toolbar-title>
-
+  
       <v-spacer></v-spacer>
       
       <v-tooltip left>
@@ -30,11 +30,12 @@
         <span>Escuela Tecnologica Instituto Tecnico central</span>
       </v-tooltip>
     </v-toolbar>
+
     <section>
-        <v-parallax src="{% static 'core/img/fondo.jpg'  %}" height="600">
-          <v-layout column align-center justify-center
+        <v-parallax src="{% static 'core/img/fondo.jpg'  %}" height="480">
+          <v-layout column align-center justify-center mb-3
           >
-            <h1 class="white--text mb-3 display-1 text-xs-center">
+            <h1 class="black--text mb-3 display-1 text-xs-center">
               Realiza tu matricula academica desde cualquier lugar
             </h1>
             <v-btn
@@ -48,7 +49,7 @@
           </v-layout>
         </v-parallax>
     </section>
-
+  
     <section>
       <v-layout
         column
@@ -119,11 +120,11 @@
         </v-flex>
       </v-layout>
     </section>
-
+  
     <section>
       <v-parallax src="{% static 'core/img/fondo_alt.jpg' %}" height="380">
         <v-layout column align-center justify-center>
-          <div class="display-1 white--text mb-3 text-xs-center">
+          <div class="display-1 black--text mb-3 text-xs-center">
             Solicitar tu certificado de estudio jamas habia sido tan facil
           </div>
           <v-btn
@@ -137,7 +138,7 @@
         </v-layout>
       </v-parallax>
     </section>
-
+  
     <section>
       <v-container grid-list-xl>
         <v-layout row wrap justify-center class="my-5">
@@ -197,7 +198,7 @@
       </v-container>
     </section>
   </v-content>
-</template>
+</v-flex>
 {% endblock content %}
 
 
